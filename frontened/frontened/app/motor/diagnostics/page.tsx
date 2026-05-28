@@ -18,20 +18,22 @@ const motorData = [
 
 type Status = "CRITICAL" | "FAULTY" | "HEALTHY";
 
-const statusConfig: Record<Status, { color: string; bg: string; label: string }> = {
-  CRITICAL: { color: "#ef4444", bg: "rgba(239,68,68,0.12)", label: "CRITICAL" },
-  FAULTY:   { color: "#f59e0b", bg: "rgba(245,158,11,0.12)", label: "FAULTY" },
-  HEALTHY:  { color: "#22c55e", bg: "rgba(34,197,94,0.12)",  label: "HEALTHY" },
+const statusConfig: Record<Status, { color: string; bg: string; border: string; label: string }> = {
+  CRITICAL: { color: "#F47920", bg: "rgba(244,121,32,0.12)", border: "rgba(244,121,32,0.3)", label: "CRITICAL" },
+  FAULTY:   { color: "#f59e0b", bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.3)", label: "FAULTY" },
+  HEALTHY:  { color: "#0ea5a0", bg: "rgba(14,165,160,0.12)", border: "rgba(14,165,160,0.3)", label: "HEALTHY" },
 };
 
 function RiskBar({ value, status }: { value: number; status: Status }) {
-  const color = status === "CRITICAL" ? "#ef4444" : status === "FAULTY" ? "#f59e0b" : "#22c55e";
+  const color =
+    status === "CRITICAL" ? "#F47920" :
+    status === "FAULTY"   ? "#f59e0b" : "#0ea5a0";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{ width: 100, height: 6, background: "rgba(255,255,255,0.08)", borderRadius: 3, overflow: "hidden" }}>
+      <div style={{ width: 90, height: 5, background: "rgba(255,255,255,0.08)", borderRadius: 3, overflow: "hidden" }}>
         <div style={{ width: `${value}%`, height: "100%", background: color, borderRadius: 3, transition: "width 0.6s ease" }} />
       </div>
-      <span style={{ fontSize: 13, fontWeight: 600, color, minWidth: 34 }}>{value}%</span>
+      <span style={{ fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, color, minWidth: 34 }}>{value}%</span>
     </div>
   );
 }
@@ -41,12 +43,12 @@ function StatusBadge({ status }: { status: Status }) {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 5,
-      padding: "3px 10px", borderRadius: 20,
+      padding: "3px 10px", borderRadius: 6,
       background: cfg.bg, color: cfg.color,
-      fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
-      border: `1px solid ${cfg.color}33`
+      fontSize: 11, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: "0.08em",
+      border: `1px solid ${cfg.border}`
     }}>
-      <span style={{ width: 6, height: 6, borderRadius: "50%", background: cfg.color, display: "inline-block" }} />
+      <span style={{ width: 5, height: 5, borderRadius: "50%", background: cfg.color, display: "inline-block" }} />
       {cfg.label}
     </span>
   );
@@ -55,43 +57,118 @@ function StatusBadge({ status }: { status: Status }) {
 function StatCard({ label, value, sub, color }: { label: string; value: number; sub: string; color?: string }) {
   return (
     <div style={{
-      flex: 1, background: "rgba(255,255,255,0.04)", borderRadius: 10,
-      padding: "16px 20px", border: "1px solid rgba(255,255,255,0.07)"
+      flex: 1,
+      background: "rgba(255,255,255,0.025)",
+      borderRadius: 16,
+      padding: "20px 22px",
+      border: "1px solid rgba(255,255,255,0.07)",
+      position: "relative",
+      overflow: "hidden",
     }}>
-      <div style={{ fontSize: 12, color: "#888", marginBottom: 6, letterSpacing: "0.04em" }}>{label}</div>
-      <div style={{ fontSize: 32, fontWeight: 700, color: color || "#fff", lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 12, color: "#666", marginTop: 5 }}>{sub}</div>
+      {color && (
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 3,
+          background: `linear-gradient(90deg, ${color}, ${color}33)`,
+          borderRadius: "16px 16px 0 0"
+        }} />
+      )}
+      <div style={{ fontSize: 11, fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, color: "#5a6a88", marginBottom: 8, letterSpacing: "0.08em" }}>{label.toUpperCase()}</div>
+      <div style={{ fontSize: 30, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, color: color || "#eef2ff", lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: 12, fontFamily: "'DM Sans', sans-serif", color: "#3a4a60", marginTop: 6 }}>{sub}</div>
     </div>
   );
 }
 
-function ActionCard({ icon, title, desc, cta, onClick }: {
-  icon: string; title: string; desc: string; cta: string; onClick: () => void;
-}) {
+type ActionCardProps = {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  cta: string;
+  streak: string;
+  accentColor: string;
+  accentBg: string;
+  tags: string[];
+  onClick: () => void;
+};
+
+function ActionCard({ icon, title, desc, cta, streak, accentColor, accentBg, tags, onClick }: ActionCardProps) {
   const [hovered, setHovered] = useState(false);
   return (
-    <div
+    <button
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        flex: 1, background: hovered ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.04)",
-        borderRadius: 12, padding: 24, border: "1px solid rgba(255,255,255,0.08)",
-        cursor: "pointer", transition: "all 0.2s ease"
+        flex: 1,
+        background: hovered ? `rgba(${accentBg}, 0.05)` : "rgba(255,255,255,0.025)",
+        borderRadius: 20,
+        padding: 0,
+        border: `1px solid ${hovered ? `rgba(${accentBg}, 0.35)` : "rgba(255,255,255,0.07)"}`,
+        cursor: "pointer",
+        textAlign: "left",
+        display: "flex",
+        flexDirection: "column",
+        transition: "all 0.3s ease",
+        overflow: "hidden",
+        boxShadow: hovered ? `0 20px 60px rgba(${accentBg}, 0.1)` : "none",
+        transform: hovered ? "translateY(-4px)" : "translateY(0)",
       }}
     >
+      {/* Streak */}
       <div style={{
-        width: 44, height: 44, borderRadius: 10,
-        background: title === "New prediction" ? "rgba(99,102,241,0.25)" : "rgba(180,130,30,0.25)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 20, marginBottom: 14
-      }}>{icon}</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{title}</div>
-      <div style={{ fontSize: 13, color: "#888", lineHeight: 1.6, marginBottom: 16 }}>{desc}</div>
-      <div style={{ fontSize: 13, color: "#818cf8", display: "flex", alignItems: "center", gap: 4 }}>
-        <span>→</span> <span>{cta}</span> <span style={{ fontSize: 11 }}>↗</span>
+        height: 3,
+        background: `linear-gradient(90deg, ${streak}, ${streak}33)`,
+        borderRadius: "20px 20px 0 0"
+      }} />
+
+      {/* Top */}
+      <div style={{ padding: "24px 28px 0", display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{
+          width: 54, height: 54, borderRadius: 14,
+          background: `rgba(${accentBg}, 0.12)`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 22, color: accentColor,
+          border: `1px solid rgba(${accentBg}, 0.2)`
+        }}>{icon}</div>
+        <span style={{
+          fontFamily: "'Rajdhani', sans-serif", fontSize: "0.65rem", fontWeight: 700,
+          letterSpacing: "3px", padding: "4px 10px", borderRadius: 6,
+          background: `rgba(${accentBg}, 0.12)`, color: accentColor,
+          border: `1px solid rgba(${accentBg}, 0.2)`
+        }}>ANALYSIS</span>
       </div>
-    </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, padding: "18px 28px" }}>
+        <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "1.45rem", fontWeight: 700, color: "#e8eeff", marginBottom: 10, letterSpacing: "-0.3px" }}>{title}</div>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.875rem", color: "#5a6a88", lineHeight: 1.65, marginBottom: 18 }}>{desc}</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+          {tags.map(tag => (
+            <span key={tag} style={{
+              fontFamily: "'Rajdhani', sans-serif", fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.8px",
+              padding: "4px 10px", borderRadius: 6,
+              background: `rgba(${accentBg}, 0.08)`,
+              border: `1px solid rgba(${accentBg}, ${hovered ? "0.35" : "0.15"})`,
+              color: hovered ? accentColor : `rgba(${accentBg.split(",").map((v, i) => i < 3 ? v : "0.7").join(",")})`,
+              transition: "all 0.3s"
+            }}>{tag}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "14px 28px",
+        borderTop: "1px solid rgba(255,255,255,0.05)",
+        fontFamily: "'Rajdhani', sans-serif", fontSize: "0.85rem", fontWeight: 600, letterSpacing: "0.5px",
+        color: hovered ? accentColor : `rgba(${accentBg}, 0.6)`,
+        transition: "all 0.3s"
+      }}>
+        <span>{cta}</span>
+        <span style={{ transition: "transform 0.3s ease", transform: hovered ? "translateX(5px)" : "translateX(0)", fontSize: "1.1rem" }}>→</span>
+      </div>
+    </button>
   );
 }
 
@@ -114,169 +191,251 @@ export default function MotorDiagnostics({ onBack }: Props) {
 
   const tabs = ["All", "Critical", "At risk"];
 
-  // Navigate to prediction form — goes to /motor (the MotorPage)
-  const goToPrediction = () => {
-    router.push("/motor");
-  };
-
-  // Go back to homepage
+  const goToPrediction = () => router.push("/motor");
   const handleBack = () => {
-    if (onBack) {
-      onBack();
-    } else {
-      router.push("/");
-    }
+    if (onBack) onBack();
+    else router.push("/");
   };
 
   return (
-    <div style={{
-      minHeight: "100vh", background: "#0f1117",
-      fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
-      color: "#e2e8f0", padding: "0"
+    <main style={{
+      minHeight: "100vh",
+      background: "#04091a",
+      fontFamily: "'DM Sans', sans-serif",
+      color: "#e2e8f0",
+      position: "relative",
+      overflow: "hidden",
     }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #0f1117; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: #04091a; }
+        ::-webkit-scrollbar-thumb { background: #1a2540; border-radius: 3px; }
         table { border-collapse: collapse; width: 100%; }
-        tr:hover td { background: rgba(255,255,255,0.025) !important; }
+        tr:hover td { background: rgba(244,121,32,0.03) !important; }
+        .diag-back-btn {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          color: #5a6a88;
+          border-radius: 8px;
+          padding: 6px 14px;
+          cursor: pointer;
+          font-size: 12px;
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 600;
+          letter-spacing: 0.05em;
+          transition: all 0.2s ease;
+        }
+        .diag-back-btn:hover { color: #F47920; border-color: rgba(244,121,32,0.3); background: rgba(244,121,32,0.05); }
+        .filter-tab {
+          padding: 6px 18px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          transition: all 0.15s;
+          border: 1px solid rgba(255,255,255,0.1);
+          background: transparent;
+          color: #5a6a88;
+        }
+        .filter-tab.active {
+          background: rgba(244,121,32,0.12);
+          color: #F47920;
+          border-color: rgba(244,121,32,0.35);
+        }
+        .filter-tab:not(.active):hover { color: #e2e8f0; border-color: rgba(255,255,255,0.2); }
       `}</style>
 
-      <div style={{ maxWidth: 860, margin: "0 auto", padding: "32px 20px" }}>
+      {/* Background radial glows — matches homepage */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        background: `
+          radial-gradient(ellipse 70% 55% at 15% 25%, rgba(244,121,32,0.06) 0%, transparent 60%),
+          radial-gradient(ellipse 60% 50% at 85% 75%, rgba(0,48,135,0.08) 0%, transparent 60%),
+          radial-gradient(ellipse 55% 45% at 75% 15%, rgba(14,165,160,0.05) 0%, transparent 55%),
+          repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(255,255,255,0.012) 80px),
+          repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.012) 80px)
+        `
+      }} />
+
+      <div style={{ position: "relative", maxWidth: 900, margin: "0 auto", padding: "48px 24px" }}>
 
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            {/* Back button to homepage */}
-            <button
-              onClick={handleBack}
-              style={{
-                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
-                color: "#aaa", borderRadius: 6, padding: "5px 12px", cursor: "pointer",
-                fontSize: 12, fontFamily: "inherit", marginRight: 4
-              }}
-            >← Back</button>
-            <div style={{
-              width: 44, height: 44, background: "rgba(99,102,241,0.2)", borderRadius: 10,
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20,
-              border: "1px solid rgba(99,102,241,0.3)"
-            }}>⚙️</div>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 36 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <button className="diag-back-btn" onClick={handleBack}>← Back</button>
+
+            {/* IOCL-style emblem */}
+            <div style={{ position: "relative", width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2.5px solid #F47920", boxShadow: "0 0 10px rgba(244,121,32,0.35)" }} />
+              <div style={{ position: "absolute", inset: 8, borderRadius: "50%", border: "2.5px solid #003087", boxShadow: "0 0 6px rgba(0,48,135,0.4)" }} />
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#F47920", boxShadow: "0 0 6px #F47920" }} />
+            </div>
+
             <div>
-              <div style={{ fontSize: 20, fontWeight: 700, color: "#fff" }}>Motor Diagnostics</div>
-              <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>IndianOil Predictive Maintenance — Fleet overview & fault detection</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 3 }}>
+                <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "1.4rem", fontWeight: 700, color: "#f0f4ff", letterSpacing: "-0.3px" }}>Motor Diagnostics</span>
+                <span style={{
+                  fontFamily: "'Rajdhani', sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "3px",
+                  padding: "3px 8px", borderRadius: 5,
+                  background: "rgba(244,121,32,0.12)", color: "#F47920",
+                  border: "1px solid rgba(244,121,32,0.25)"
+                }}>MOTOR</span>
+              </div>
+              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "0.65rem", fontWeight: 600, color: "#2a3450", letterSpacing: "2px" }}>
+                INDIANOIL PREDICTIVE MAINTENANCE — FLEET OVERVIEW &amp; FAULT DETECTION
+              </div>
             </div>
           </div>
-          <div style={{ color: "#555", cursor: "pointer", fontSize: 18, padding: 4 }}>⋯</div>
         </div>
 
         {/* Stat Cards */}
-        <div style={{ display: "flex", gap: 12, marginBottom: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 40 }}>
           <StatCard label="Total motors" value={motorData.length} sub="Across 3 facilities" />
-          <StatCard label="Healthy" value={healthy} sub="Operating normally" color="#22c55e" />
+          <StatCard label="Healthy" value={healthy} sub="Operating normally" color="#0ea5a0" />
           <StatCard label="At risk" value={atRisk} sub="Monitoring required" color="#f59e0b" />
-          <StatCard label="Critical" value={critical} sub="Immediate action" color="#ef4444" />
+          <StatCard label="Critical" value={critical} sub="Immediate action" color="#F47920" />
         </div>
 
         {view === "dashboard" && (
           <>
-            <div style={{ fontSize: 14, fontWeight: 600, color: "#fff", marginBottom: 14, letterSpacing: "0.02em" }}>
-              Motor analysis
-            </div>
-            <div style={{ display: "flex", gap: 14 }}>
+            <div style={{
+              fontFamily: "'Rajdhani', sans-serif", fontSize: "0.75rem", fontWeight: 700,
+              color: "#F47920", letterSpacing: "3px", marginBottom: 20
+            }}>MOTOR ANALYSIS</div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
               <ActionCard
-                icon="+"
-                title="New prediction"
+                icon={
+                  <svg viewBox="0 0 64 64" width={28} height={28} fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round">
+                    <circle cx="32" cy="32" r="18" />
+                    <circle cx="32" cy="32" r="8" fill="currentColor" opacity="0.2" stroke="none" />
+                    <circle cx="32" cy="32" r="3" fill="currentColor" stroke="none" />
+                    <line x1="32" y1="4" x2="32" y2="14" />
+                    <line x1="32" y1="50" x2="32" y2="60" />
+                    <line x1="4" y1="32" x2="14" y2="32" />
+                    <line x1="50" y1="32" x2="60" y2="32" />
+                  </svg>
+                }
+                title="New Prediction"
                 desc="Enter sensor readings for a single motor — air temp, RPM, torque, tool wear — and get an instant fault classification."
                 cta="Run single motor analysis"
-                onClick={goToPrediction}   // ← navigates to /motor
+                streak="#F47920"
+                accentColor="#F47920"
+                accentBg="244,121,32"
+                tags={["RPM Analysis", "Torque Check", "Tool Wear"]}
+                onClick={goToPrediction}
               />
               <ActionCard
-                icon="📈"
-                title="Fleet risk forecast"
-                desc="View all 10 motors ranked by failure probability. See trend sparklines, fault types, and recommended maintenance windows."
+                icon={
+                  <svg viewBox="0 0 64 64" width={28} height={28} fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="8,48 22,30 32,38 44,20 56,10" />
+                    <polyline points="44,10 56,10 56,22" />
+                    <line x1="8" y1="56" x2="56" y2="56" />
+                    <line x1="8" y1="56" x2="8" y2="10" />
+                  </svg>
+                }
+                title="Fleet Risk Forecast"
+                desc="View all 10 motors ranked by failure probability. See trend data, fault types, and recommended maintenance windows."
                 cta="View fleet risk overview"
+                streak="#003087"
+                accentColor="#5b8af0"
+                accentBg="0,48,135"
+                tags={["10 Motors", "Risk Ranking", "Maintenance Windows"]}
                 onClick={() => setView("fleet")}
               />
             </div>
+
+            <p style={{
+              fontFamily: "'Rajdhani', sans-serif", fontSize: "0.68rem", fontWeight: 500,
+              color: "#2a3450", letterSpacing: "1px", textAlign: "center", marginTop: 40
+            }}>
+              Models trained on real industrial sensor datasets &nbsp;·&nbsp; Binary &amp; multi-class classification
+            </p>
           </>
         )}
 
         {view === "fleet" && (
           <>
-            {/* Back + title */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
-              <button
-                onClick={() => setView("dashboard")}
-                style={{
-                  background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
-                  color: "#aaa", borderRadius: 6, padding: "5px 12px", cursor: "pointer",
-                  fontSize: 12, fontFamily: "inherit"
-                }}
-              >← Back</button>
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>Fleet status</span>
+            {/* Sub-header */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}>
+              <button className="diag-back-btn" onClick={() => setView("dashboard")}>← Back</button>
+              <span style={{
+                fontFamily: "'Rajdhani', sans-serif", fontSize: "0.75rem", fontWeight: 700,
+                color: "#F47920", letterSpacing: "3px"
+              }}>FLEET STATUS</span>
             </div>
 
             {/* Filter tabs */}
-            <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
+            <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
               {tabs.map(t => (
                 <button
                   key={t}
+                  className={`filter-tab${filter === t ? " active" : ""}`}
                   onClick={() => setFilter(t)}
-                  style={{
-                    padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
-                    cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
-                    background: filter === t ? "#fff" : "transparent",
-                    color: filter === t ? "#0f1117" : "#888",
-                    border: `1px solid ${filter === t ? "#fff" : "rgba(255,255,255,0.15)"}`
-                  }}
                 >{t}</button>
               ))}
             </div>
 
             {/* Table */}
-            <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{
+              background: "rgba(255,255,255,0.02)",
+              borderRadius: 16, overflow: "hidden",
+              border: "1px solid rgba(255,255,255,0.07)"
+            }}>
               <table>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-                    {["Motor ID", "Type", "RPM", "Torque (Nm)", "Tool wear", "Failure risk", "Status"].map(h => (
+                    {["Motor ID", "Type", "RPM", "Torque (Nm)", "Tool Wear", "Failure Risk", "Status"].map(h => (
                       <th key={h} style={{
-                        padding: "11px 16px", textAlign: "left", fontSize: 12,
-                        color: "#555", fontWeight: 600, letterSpacing: "0.04em",
+                        padding: "12px 18px", textAlign: "left",
+                        fontFamily: "'Rajdhani', sans-serif",
+                        fontSize: 11, color: "#2a3450", fontWeight: 700, letterSpacing: "0.08em",
                         background: "rgba(255,255,255,0.02)"
-                      }}>{h}</th>
+                      }}>{h.toUpperCase()}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((m) => (
-                    <tr key={m.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                      <td style={{ padding: "13px 16px", fontSize: 13, fontWeight: 700, color: "#e2e8f0" }}>{m.id}</td>
-                      <td style={{ padding: "13px 16px" }}>
+                    <tr key={m.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      <td style={{ padding: "14px 18px" }}>
                         <span style={{
-                          display: "inline-block", width: 24, height: 24, borderRadius: 5,
-                          background: "rgba(255,255,255,0.08)", textAlign: "center",
-                          lineHeight: "24px", fontSize: 12, fontWeight: 700, color: "#aaa"
+                          fontFamily: "'Rajdhani', sans-serif", fontSize: 14, fontWeight: 700,
+                          color: "#F47920", letterSpacing: "0.04em"
+                        }}>{m.id}</span>
+                      </td>
+                      <td style={{ padding: "14px 18px" }}>
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", justifyContent: "center",
+                          width: 26, height: 26, borderRadius: 6,
+                          background: "rgba(244,121,32,0.1)", border: "1px solid rgba(244,121,32,0.2)",
+                          fontFamily: "'Rajdhani', sans-serif", fontSize: 12, fontWeight: 700, color: "#F47920"
                         }}>{m.type}</span>
                       </td>
-                      <td style={{ padding: "13px 16px", fontSize: 13, color: "#ccc" }}>{m.rpm.toLocaleString()}</td>
-                      <td style={{ padding: "13px 16px", fontSize: 13, color: "#ccc" }}>{m.torque}</td>
-                      <td style={{ padding: "13px 16px", fontSize: 13, color: "#ccc" }}>{m.toolWear} min</td>
-                      <td style={{ padding: "13px 16px" }}><RiskBar value={m.risk} status={m.status as Status} /></td>
-                      <td style={{ padding: "13px 16px" }}><StatusBadge status={m.status as Status} /></td>
+                      <td style={{ padding: "14px 18px", fontFamily: "'Rajdhani', sans-serif", fontSize: 13, fontWeight: 600, color: "#8899bb" }}>{m.rpm.toLocaleString()}</td>
+                      <td style={{ padding: "14px 18px", fontFamily: "'Rajdhani', sans-serif", fontSize: 13, fontWeight: 600, color: "#8899bb" }}>{m.torque}</td>
+                      <td style={{ padding: "14px 18px", fontFamily: "'Rajdhani', sans-serif", fontSize: 13, fontWeight: 600, color: "#8899bb" }}>{m.toolWear} min</td>
+                      <td style={{ padding: "14px 18px" }}><RiskBar value={m.risk} status={m.status as Status} /></td>
+                      <td style={{ padding: "14px 18px" }}><StatusBadge status={m.status as Status} /></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div style={{ fontSize: 12, color: "#444", marginTop: 14, textAlign: "right" }}>
-              Showing {filtered.length} of {motorData.length} motors
+            <div style={{
+              fontFamily: "'Rajdhani', sans-serif", fontSize: 11, fontWeight: 600,
+              color: "#2a3450", letterSpacing: "1px", marginTop: 14, textAlign: "right"
+            }}>
+              SHOWING {filtered.length} OF {motorData.length} MOTORS
             </div>
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 }
