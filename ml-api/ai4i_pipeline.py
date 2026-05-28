@@ -191,7 +191,7 @@ for name, model in models.items():
     y_prob = model.predict_proba(X_test_sc)[:, 1]
     auc    = roc_auc_score(y_test, y_prob)
     cv     = cross_val_score(model, X_train_sc, y_train, cv=5, scoring="roc_auc")
-    results[name] = {
+    results[name]=  {
         "model": model, "y_pred": y_pred, "y_prob": y_prob,
         "auc": auc, "cv_mean": cv.mean(), "cv_std": cv.std(),
     }

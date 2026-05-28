@@ -1,16 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import MotorPage from './motor/page'
-import PumpPage from './pump/page'
-
-type MachineType = 'motor' | 'pump' | null
+import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
-  const [selected, setSelected] = useState<MachineType>(null)
-
-  if (selected === 'motor') return <MotorPage onBack={() => setSelected(null)} />
-  if (selected === 'pump')  return <PumpPage  onBack={() => setSelected(null)} />
+  const router = useRouter()
 
   return (
     <main className="selector-root">
@@ -38,8 +31,8 @@ export default function HomePage() {
         </div>
 
         <div className="cards-row">
-          {/* Motor Card */}
-          <button className="machine-card motor-card" onClick={() => setSelected('motor')}>
+          {/* Motor Card — navigates to /motor/diagnostics */}
+          <button className="machine-card motor-card" onClick={() => router.push('/motor/diagnostics')}>
             <div className="card-streak motor-streak" />
             <div className="card-top">
               <div className="card-icon-wrap motor-icon-bg">
@@ -80,8 +73,8 @@ export default function HomePage() {
           {/* Divider */}
           <div className="cards-divider"><span>OR</span></div>
 
-          {/* Pump Card */}
-          <button className="machine-card pump-card" onClick={() => setSelected('pump')}>
+          {/* Pump Card — navigates to /pump */}
+          <button className="machine-card pump-card" onClick={() => router.push('/pump')}>
             <div className="card-streak pump-streak" />
             <div className="card-top">
               <div className="card-icon-wrap pump-icon-bg">
@@ -172,12 +165,9 @@ export default function HomePage() {
           gap: 52px;
         }
 
-        /* ── Header ── */
         .selector-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 24px; }
 
-        .iocl-logo-row {
-          display: flex; align-items: center; gap: 16px;
-        }
+        .iocl-logo-row { display: flex; align-items: center; gap: 16px; }
 
         .iocl-emblem {
           position: relative; width: 52px; height: 52px;
@@ -187,176 +177,73 @@ export default function HomePage() {
           position: absolute; border-radius: 50%;
           border: 3px solid transparent;
         }
-        .outer-ring {
-          inset: 0;
-          border-color: var(--iocl-orange);
-          box-shadow: 0 0 12px rgba(244,121,32,0.4);
-        }
-        .inner-ring {
-          inset: 8px;
-          border-color: var(--iocl-blue);
-          box-shadow: 0 0 8px rgba(0,48,135,0.5);
-        }
-        .emblem-core {
-          width: 12px; height: 12px; border-radius: 50%;
-          background: var(--iocl-orange);
-          box-shadow: 0 0 8px var(--iocl-orange);
-        }
+        .outer-ring { inset: 0; border-color: var(--iocl-orange); box-shadow: 0 0 12px rgba(244,121,32,0.4); }
+        .inner-ring { inset: 8px; border-color: var(--iocl-blue); box-shadow: 0 0 8px rgba(0,48,135,0.5); }
+        .emblem-core { width: 12px; height: 12px; border-radius: 50%; background: var(--iocl-orange); box-shadow: 0 0 8px var(--iocl-orange); }
 
         .iocl-wordmark { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
-        .iocl-name {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 1.6rem; font-weight: 700;
-          color: #f0f4ff;
-          letter-spacing: -0.5px;
-        }
-        .iocl-tagline {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 0.62rem; font-weight: 600;
-          letter-spacing: 3px;
-          color: var(--iocl-orange);
-        }
+        .iocl-name { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; color: #f0f4ff; letter-spacing: -0.5px; }
+        .iocl-tagline { font-family: 'Rajdhani', sans-serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 3px; color: var(--iocl-orange); }
 
-        .header-title {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: clamp(2.2rem, 5vw, 3.4rem);
-          font-weight: 700;
-          color: #eef2ff;
-          letter-spacing: -1px;
-          line-height: 1.05;
-        }
+        .header-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; color: #eef2ff; letter-spacing: -1px; line-height: 1.05; }
+        .header-sub { font-size: 0.95rem; color: #5a6a88; max-width: 420px; line-height: 1.65; }
 
-        .header-sub {
-          font-size: 0.95rem;
-          color: #5a6a88;
-          max-width: 420px;
-          line-height: 1.65;
-        }
-
-        /* ── Cards ── */
-        .cards-row {
-          display: flex; align-items: stretch; gap: 0; width: 100%;
-        }
+        .cards-row { display: flex; align-items: stretch; gap: 0; width: 100%; }
 
         .machine-card {
           position: relative; flex: 1;
           background: rgba(255,255,255,0.025);
           border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 20px;
-          padding: 0;
+          border-radius: 20px; padding: 0;
           cursor: pointer; text-align: left;
           display: flex; flex-direction: column;
-          transition: all 0.3s ease;
-          overflow: hidden;
+          transition: all 0.3s ease; overflow: hidden;
         }
 
-        .card-streak {
-          position: absolute; top: 0; left: 0; right: 0; height: 3px;
-          border-radius: 20px 20px 0 0;
-        }
+        .card-streak { position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 20px 20px 0 0; }
         .motor-streak { background: linear-gradient(90deg, var(--iocl-orange), rgba(244,121,32,0.2)); }
         .pump-streak  { background: linear-gradient(90deg, var(--iocl-blue), rgba(0,48,135,0.2)); }
 
-        .motor-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(244,121,32,0.35);
-          background: rgba(244,121,32,0.04);
-          box-shadow: 0 20px 60px rgba(244,121,32,0.1);
-        }
-        .pump-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(0,48,135,0.5);
-          background: rgba(0,48,135,0.05);
-          box-shadow: 0 20px 60px rgba(0,48,135,0.15);
-        }
+        .motor-card:hover { transform: translateY(-5px); border-color: rgba(244,121,32,0.35); background: rgba(244,121,32,0.04); box-shadow: 0 20px 60px rgba(244,121,32,0.1); }
+        .pump-card:hover  { transform: translateY(-5px); border-color: rgba(0,48,135,0.5); background: rgba(0,48,135,0.05); box-shadow: 0 20px 60px rgba(0,48,135,0.15); }
 
-        .card-top {
-          padding: 28px 28px 0;
-          display: flex; align-items: center; gap: 14px;
-        }
+        .card-top { padding: 28px 28px 0; display: flex; align-items: center; gap: 14px; }
 
-        .card-icon-wrap {
-          width: 58px; height: 58px; border-radius: 14px;
-          display: flex; align-items: center; justify-content: center;
-          flex-shrink: 0;
-        }
+        .card-icon-wrap { width: 58px; height: 58px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .motor-icon-bg { background: rgba(244,121,32,0.12); color: var(--iocl-orange); }
         .pump-icon-bg  { background: rgba(0,48,135,0.15);   color: #5b8af0; }
 
         .card-icon { width: 36px; height: 36px; }
 
-        .card-label {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 0.65rem; font-weight: 700; letter-spacing: 3px;
-          padding: 4px 10px; border-radius: 6px;
-        }
+        .card-label { font-family: 'Rajdhani', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 3px; padding: 4px 10px; border-radius: 6px; }
         .motor-label { background: rgba(244,121,32,0.12); color: var(--iocl-orange); border: 1px solid rgba(244,121,32,0.2); }
-        .pump-label  { background: rgba(0,48,135,0.15);   color: #5b8af0;            border: 1px solid rgba(0,48,135,0.25); }
+        .pump-label  { background: rgba(0,48,135,0.15);   color: #5b8af0; border: 1px solid rgba(0,48,135,0.25); }
 
         .card-content { flex: 1; padding: 20px 28px; }
-
-        .card-title {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 1.55rem; font-weight: 700;
-          color: #e8eeff; margin-bottom: 10px; letter-spacing: -0.3px;
-        }
-
-        .card-desc {
-          font-size: 0.875rem; color: #5a6a88;
-          line-height: 1.65; margin-bottom: 18px;
-        }
-
+        .card-title { font-family: 'Rajdhani', sans-serif; font-size: 1.55rem; font-weight: 700; color: #e8eeff; margin-bottom: 10px; letter-spacing: -0.3px; }
+        .card-desc { font-size: 0.875rem; color: #5a6a88; line-height: 1.65; margin-bottom: 18px; }
         .card-features { display: flex; flex-wrap: wrap; gap: 7px; }
 
-        .feature-tag {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 0.7rem; font-weight: 600; letter-spacing: 0.8px;
-          padding: 4px 10px; border-radius: 6px;
-        }
+        .feature-tag { font-family: 'Rajdhani', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.8px; padding: 4px 10px; border-radius: 6px; }
         .motor-tag { background: rgba(244,121,32,0.08); border: 1px solid rgba(244,121,32,0.15); color: rgba(244,121,32,0.7); }
         .pump-tag  { background: rgba(0,48,135,0.1);    border: 1px solid rgba(0,48,135,0.2);    color: #5b8af0; }
 
         .motor-card:hover .motor-tag { border-color: rgba(244,121,32,0.35); color: var(--iocl-orange); }
         .pump-card:hover  .pump-tag  { border-color: rgba(0,48,135,0.45);   color: #7aa3f7; }
 
-        .card-footer {
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 16px 28px;
-          border-top: 1px solid rgba(255,255,255,0.05);
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px;
-          transition: all 0.3s ease;
-        }
+        .card-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-top: 1px solid rgba(255,255,255,0.05); font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s ease; }
         .motor-footer { color: rgba(244,121,32,0.6); }
         .pump-footer  { color: rgba(91,138,240,0.6); }
-
         .motor-card:hover .motor-footer { color: var(--iocl-orange); }
         .pump-card:hover  .pump-footer  { color: #7aa3f7; }
 
         .arrow { transition: transform 0.3s ease; font-size: 1.1rem; }
         .machine-card:hover .arrow { transform: translateX(5px); }
 
-        /* ── Divider ── */
-        .cards-divider {
-          display: flex; align-items: center; justify-content: center;
-          padding: 0 20px; flex-shrink: 0;
-        }
-        .cards-divider span {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 0.65rem; font-weight: 700; letter-spacing: 2.5px;
-          color: #2a3450;
-          background: #04091a;
-          padding: 8px 10px;
-          border: 1px solid #141e35;
-          border-radius: 8px;
-        }
+        .cards-divider { display: flex; align-items: center; justify-content: center; padding: 0 20px; flex-shrink: 0; }
+        .cards-divider span { font-family: 'Rajdhani', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 2.5px; color: #2a3450; background: #04091a; padding: 8px 10px; border: 1px solid #141e35; border-radius: 8px; }
 
-        /* ── Footer ── */
-        .selector-footer {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 0.7rem; font-weight: 500;
-          color: #2a3450; letter-spacing: 1px;
-        }
+        .selector-footer { font-family: 'Rajdhani', sans-serif; font-size: 0.7rem; font-weight: 500; color: #2a3450; letter-spacing: 1px; }
 
         @media (max-width: 640px) {
           .cards-row { flex-direction: column; }
