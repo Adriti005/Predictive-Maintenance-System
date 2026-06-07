@@ -116,12 +116,12 @@ export default function DashboardLayout() {
 
         {/* Logo */}
         <div style={{ padding: '14px 16px 12px', borderBottom: '2px solid rgba(0,0,0,0.09)', background: '#e8edf5' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <div style={{ position: 'relative', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid #F47920' }} />
-              <div style={{ position: 'absolute', inset: 6, borderRadius: '50%', border: '2px solid #003087' }} />
-              <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#F47920' }} />
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+        <img
+             src="/iocl-logo.png"
+             alt="IOCL"
+             style={{ width: 50, height: 50, objectFit: 'contain', flexShrink: 0 }}
+              />
             <div>
               <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 17, fontWeight: 700, color: '#F47920', letterSpacing: 2 }}>IndianOil</div>
               <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 7, color: '#64748b', letterSpacing: 2, fontWeight: 600 }}>PREDICTIVE MAINTENANCE</div>

@@ -26,11 +26,11 @@ function OriginalHomePage() {
       <div className="selector-container">
         <div className="selector-header">
           <div className="iocl-logo-row">
-            <div className="iocl-emblem">
-              <div className="emblem-ring outer-ring" />
-              <div className="emblem-ring inner-ring" />
-              <div className="emblem-core" />
-            </div>
+            <img
+               src="/iocl-logo.png"
+                alt="IndianOil"
+               style={{ width:100, height: 100, objectFit: 'contain' }}
+             />
             <div className="iocl-wordmark">
               <span className="iocl-name">IndianOil</span>
               <span className="iocl-tagline">PREDICTIVE MAINTENANCE</span>
@@ -204,11 +204,8 @@ function OriginalHomePage() {
         .selector-container { position: relative; max-width: 1200px; width: 100%; padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
         .selector-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
         .iocl-logo-row { display: flex; align-items: center; gap: 16px; }
-        .iocl-emblem { position: relative; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; }
-        .emblem-ring { position: absolute; border-radius: 50%; border: 3px solid transparent; }
-        .outer-ring { inset: 0; border-color: var(--iocl-orange); box-shadow: 0 0 12px rgba(244,121,32,0.4); }
-        .inner-ring { inset: 8px; border-color: var(--iocl-blue); box-shadow: 0 0 8px rgba(0,48,135,0.5); }
-        .emblem-core { width: 12px; height: 12px; border-radius: 50%; background: var(--iocl-orange); box-shadow: 0 0 8px var(--iocl-orange); }
+        
+        
         .iocl-wordmark { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
 
         /* ── HEADER TEXT ── */

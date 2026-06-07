@@ -96,11 +96,13 @@ export default function AuthPage({ onLogin }: { onLogin: (u: User) => void }) {
       <div style={{ position: 'relative', width: '100%', maxWidth: 460, padding: 20 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-            <div style={{ position: 'relative', width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2.5px solid #F47920', boxShadow: '0 0 10px rgba(244,121,32,0.25)' }} />
-              <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', border: '2.5px solid #003087' }} />
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F47920' }} />
-            </div>
+           <div className="iocl-logo-row">
+            <img
+               src="/iocl-logo.png"
+                alt="IndianOil"
+               style={{ width:100, height: 100, objectFit: 'contain' }}
+             />
+             </div>
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 26, fontWeight: 700, color: '#0d1b2e', letterSpacing: -0.5 }}>IndianOil</div>
               <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 9, color: '#F47920', letterSpacing: 3, fontWeight: 600 }}>PREDICTIVE MAINTENANCE</div>
